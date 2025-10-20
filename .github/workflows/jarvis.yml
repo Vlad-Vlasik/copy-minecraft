@@ -9,30 +9,19 @@ jobs:
   execute-command:
     runs-on: ubuntu-latest
     steps:
-      # Клонуємо репозиторій
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Встановлюємо Git
       - name: Setup Git
         run: |
           git config --global user.name "Jarvis Assistant"
           git config --global user.email "bot@jarvis.ai"
 
-      # Завантажуємо токен з секретів
-      - name: Load Token
-        env:
-          GITHUB_TOKEN: ${{ secrets.GPT_TOKEN }}
-        run: |
-          echo "🔹 Токен завантажено для безпечної роботи."
-
-      # Зберігаємо команду, яку я дам через чат
       - name: Save Command
         run: |
           echo "${{ github.event.client_payload.command }}" > command.txt
           echo "Команда від Джарвіса збережена."
 
-      # Виконуємо команду створення файлу після підтвердження
       - name: Execute Command
         env:
           GITHUB_TOKEN: ${{ secrets.GPT_TOKEN }}
@@ -40,7 +29,7 @@ jobs:
           COMMAND=$(cat command.txt | cut -d' ' -f1)
           FILE=$(cat command.txt | cut -d' ' -f2)
           CONTENT=$(cat command.txt | cut -d' ' -f3-)
-          
+
           if [ "$COMMAND" == "create_file" ]; then
             echo "$CONTENT" > "$FILE"
             echo "🤖 Файл $FILE створено. Чекаємо підтвердження для пушу."
